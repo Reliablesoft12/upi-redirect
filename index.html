@@ -1,25 +1,40 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <script>
-      function redirectToUPI() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const pa = urlParams.get('pa'); // UPI ID
-        const pn = urlParams.get('pn'); // Name
-        const am = urlParams.get('am'); // Amount (optional)
-        const cu = "INR";
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Redirecting to UPI</title>
+  <script>
+    window.onload = function () {
+      const params = new URLSearchParams(window.location.search);
 
-        if (!pa || !pn) {
-          document.body.innerHTML = "<h2>Missing UPI ID or Name. Please check your link.</h2>";
-          return;
-        }
-
-        const upiUrl = `upi://pay?pa=${encodeURIComponent(pa)}&pn=${encodeURIComponent(pn)}${am ? `&am=${am}` : ''}&cu=${cu}`;
-        window.location.href = upiUrl;
+      // Option 1: Full UPI data passed via ?data=
+      if (params.has("data")) {
+        const raw = params.get("data");
+        const upiLink = "upi://pay?" + decodeURIComponent(raw);
+        window.location.href = upiLink;
+        return;
       }
-    </script>
-  </head>
-  <body onload="redirectToUPI()">
-    <p>Redirecting to UPI app...</p>
-  </body>
+
+      // Option 2: Simple pa, pn, am, etc.
+      const pa = params.get("pa");
+      const pn = params.get("pn");
+      const am = params.get("am");
+      const cu = params.get("cu") || "INR";
+      const tn = params.get("tn") || ""; // optional transaction note
+
+      if (pa && pn) {
+        let upiLink = `upi://pay?pa=${encodeURIComponent(pa)}&pn=${encodeURIComponent(pn)}&cu=${encodeURIComponent(cu)}`;
+        if (am) upiLink += `&am=${encodeURIComponent(am)}`;
+        if (tn) upiLink += `&tn=${encodeURIComponent(tn)}`;
+        window.location.href = upiLink;
+      } else {
+        document.body.innerHTML = "<h2>Invalid or missing UPI parameters.</h2>";
+      }
+    };
+  </script>
+</head>
+<body>
+  <h2>Redirecting to your UPI app...</h2>
+</body>
 </html>

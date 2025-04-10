@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      function redirectToUPI() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const pa = urlParams.get('pa'); // UPI ID
+        const pn = urlParams.get('pn'); // Name
+        const am = urlParams.get('am'); // Amount (optional)
+        const cu = "INR";
+
+        if (!pa || !pn) {
+          document.body.innerHTML = "<h2>Missing UPI ID or Name. Please check your link.</h2>";
+          return;
+        }
+
+        const upiUrl = `upi://pay?pa=${encodeURIComponent(pa)}&pn=${encodeURIComponent(pn)}${am ? `&am=${am}` : ''}&cu=${cu}`;
+        window.location.href = upiUrl;
+      }
+    </script>
+  </head>
+  <body onload="redirectToUPI()">
+    <p>Redirecting to UPI app...</p>
+  </body>
+</html>

@@ -1,40 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Redirecting to UPI</title>
+  <meta charset="UTF-8">
+  <title>Pay to RELIABLESOFT</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script>
-    window.onload = function () {
-      const params = new URLSearchParams(window.location.search);
+    const upiLink = "upi://pay?ver=01&mode=15&tr=AA010-20250526-12196&tn=Test&pn=RELIABLESOFT&pa=mycabletvqr@hdfcbank&mc=6012&am=2.05&cu=INR&qrMedium=02&QRexpire=2025-05-27T23:59:59+05:30";
 
-      // Option 1: Full UPI data passed via ?data=
-      if (params.has("data")) {
-        const raw = params.get("data");
-        const upiLink = "upi://pay?" + decodeURIComponent(raw);
+    const gpayLink = "gpay://upi/pay" + upiLink.slice(7);
+    const phonepeLink = "phonepe://pay" + upiLink.slice(7);
+    const paytmLink = "paytmmp://pay" + upiLink.slice(7);
+    const bhimLink = "bhim://upi/pay" + upiLink.slice(7);
+
+    function isAndroid() {
+      return /Android/i.test(navigator.userAgent);
+    }
+
+    function isIOS() {
+      return /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    }
+
+    function redirectToUPI() {
+      if (isAndroid()) {
         window.location.href = upiLink;
-        return;
       }
+    }
 
-      // Option 2: Simple pa, pn, am, etc.
-      const pa = params.get("pa");
-      const pn = params.get("pn");
-      const am = params.get("am");
-      const cu = params.get("cu") || "INR";
-      const tn = params.get("tn") || ""; // optional transaction note
-
-      if (pa && pn) {
-        let upiLink = `upi://pay?pa=${encodeURIComponent(pa)}&pn=${encodeURIComponent(pn)}&cu=${encodeURIComponent(cu)}`;
-        if (am) upiLink += `&am=${encodeURIComponent(am)}`;
-        if (tn) upiLink += `&tn=${encodeURIComponent(tn)}`;
-        window.location.href = upiLink;
-      } else {
-        document.body.innerHTML = "<h2>Invalid or missing UPI parameters.</h2>";
-      }
-    };
+    window.onload = redirectToUPI;
   </script>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    img { margin-top: 20px; }
+  </style>
 </head>
 <body>
-  <h2>Redirecting to your UPI app...</h2>
+  <h2>Pay to <strong>RELIABLESOFT</strong></h2>
+  <p>Amount: ₹2.05</p>
+  <p>UPI ID: <strong>mycabletvqr@hdfcbank</strong></p>
+
+  <p><b>Choose your app:</b></p>
+
+  <a href="#" onclick="window.location.href = gpayLink">
+    <button>Google Pay</button>
+  </a>
+
+  <a href="#" onclick="window.location.href = phonepeLink">
+    <button>PhonePe</button>
+  </a>
+
+  <a href="#" onclick="window.location.href = paytmLink">
+    <button>Paytm</button>
+  </a>
+
+  <a href="#" onclick="window.location.href = bhimLink">
+    <button>BHIM</button>
+  </a>
+
+  <p>Or scan this QR with any UPI app:</p>
+  <img src="https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=upi://pay?ver=01&mode=15&tr=AA010-20250526-12196&tn=Test&pn=RELIABLESOFT&pa=mycabletvqr@hdfcbank&mc=6012&am=2.05&cu=INR&qrMedium=02&QRexpire=2025-05-27T23:59:59+05:30" alt="UPI QR Code">
 </body>
 </html>
